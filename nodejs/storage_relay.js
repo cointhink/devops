@@ -43,12 +43,10 @@ r.connect({host:'localhost', port:28015, db:'cointhink'},
               } else if(payload.action == 'set'){
                 console.log(fullname+' set '+payload.key+' '+payload.value)
                 storage[payload.key] = payload.value
-                var update_hash = {}
-                update_hash[payload.key] = payload.value
                 r.table('scripts').get(fullname).
-                  update({storage:update_hash}).run(conn, function(status){
-                  console.log(fullname+' set '+payload.key+' '+payload.value+' = '+status)
-                  respond({"status":"ok", "payload":status})
+                  update({storage:storage}).run(conn, function(status){
+                    console.log(fullname+' set '+payload.key+' '+payload.value+' = '+status)
+                    respond({"status":"ok", "payload":status})
                 })
               } else if(payload.action == 'load'){
                 console.log(fullname+' load storage, returning '+JSON.stringify(storage))
