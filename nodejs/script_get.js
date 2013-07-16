@@ -18,7 +18,8 @@ base.zk_services(function(services){
       console.log("rethinkdb closed")
     })
 
-    console.log("rethink connected. http listening on "+services.script_get.port)
+    console.log("rethinkdb connected.")
+    console.log("http listening on "+services.script_get.port)
     http.createServer(do_request).listen(services.script_get.port);
 
     function do_request(req, res){
