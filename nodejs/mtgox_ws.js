@@ -4,6 +4,10 @@ var ZK = require('zkjs')
 var zk = new ZK({root: '/cointhink'})
 
 zk.start(function(err){
+  if(err){
+    console.log("zookeeper connect FAIL "+err)
+    process.exit()
+  }
   zk_services(function(services){
     var zmq = require('zmq'),
         sock = zmq.socket('push')
@@ -117,7 +121,5 @@ zk.start(function(err){
     })
   }
 })
-
-
 
 
