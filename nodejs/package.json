@@ -3,14 +3,15 @@
   "version":"0.0.1",
   "private": true,
   "dependencies": {
-    "rethinkdb":">=1.7.0-2",
+    "async":"*",
     "forever":"latest",
-    "zmq":"*",
     "mtgox-orderbook":"*",
     "socket.io-client":"*",
-    "websocket":"*",
-    "riemann":"*",
     "redis":"*",
-    "zkjs":"*"
+    "rethinkdb":">=1.7.0-2",
+    "riemann":"*",
+    "websocket":"*",
+    "zkjs":"*",
+    "zmq":"*"
   }
 }
