@@ -1,0 +1,3 @@
+create /cointhink/services/mtgox_ws tcp://127.0.0.1:3001
+create /cointhink/services/riemann tcp://127.0.0.1:5555 
+create /cointhink/services/redis tcp://127.0.0.1:6379
