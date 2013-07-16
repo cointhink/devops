@@ -2,9 +2,10 @@ var base = require('./base')
 base.zk_services(function(services){
 
   var zmq = require('zmq'),
-      sock = zmq.socket('rep');
-  var r = require('rethinkdb'),
-      redis = require('redis').createClient()
+      sock = zmq.socket('rep')
+  var r = require('rethinkdb')
+  var redis = require('redis').createClient(services.redis.port, services.redis.hostname)
+  console.log('redis configured with '+services.redis.host)
 
 
   r.connect({host:services.rethinkdb.hostname,

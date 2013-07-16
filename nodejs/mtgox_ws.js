@@ -18,7 +18,7 @@ base.zk_services(function(services){
   riemann.tcp.socket.on('connect', function(){ use_riemann = true; console.log("riemann connected")})
 
   // redis setup
-  redis = require('redis').createClient(services.redis.port, services.redis.hostname)
+  var redis = require('redis').createClient(services.redis.port, services.redis.hostname)
   console.log('redis configured with '+services.redis.host)
   redis.on('connect', function(){
     console.log("redis connected!")
