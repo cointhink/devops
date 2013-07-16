@@ -10,6 +10,7 @@
     "socket.io-client":"*",
     "websocket":"*",
     "riemann":"*",
-    "redis":"*"
+    "redis":"*",
+    "zkjs":"*"
   }
 }
