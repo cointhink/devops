@@ -3,7 +3,6 @@ module.exports = new (function(){
   var async = require('async')
   var ZK = require('zkjs')
   var zk = new ZK({root: '/cointhink'})
-  var uuid = require('uuid')
 
   this.zk_services = function(cb){
     zk.start(function(err){
