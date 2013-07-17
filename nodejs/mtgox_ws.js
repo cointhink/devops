@@ -1,7 +1,7 @@
 var base = require('./base')
 base.zk_services(function(services){
   var zmq = require('zmq'),
-      sock = zmq.socket('push')
+      sock = zmq.socket('pub')
 
   var websocket = require('websocket')
 
@@ -47,7 +47,7 @@ base.zk_services(function(services){
               console.log(packet.ticker.last)
               message_count += 1
               var ticker = packet["ticker"]
-              zmq_send(ticker)
+              zmq_send(ticker, "C")
               redis_ticker(ticker)
             }
         });
@@ -69,8 +69,10 @@ base.zk_services(function(services){
       message_count = 0
     }, 1000)
 
-    function zmq_send(packet){
+    function zmq_send(packet, channel){
+      if(typeof(packet) != 'object') {console.err('bad input to zmq_send')}
       var data = JSON.stringify(packet)
+      if(typeof(channel) == 'string') { data = channel + data }
       sock.send(data)
     }
 
