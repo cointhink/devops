@@ -5,6 +5,7 @@ base.zk_services(function(services){
   var r = require('rethinkdb');
   var fs = require('fs');
   var path = require('path');
+  var uuid = require('uuid')
 
   r.connect({host:services.rethinkdb.hostname,
              port:services.rethinkdb.port,
@@ -76,13 +77,14 @@ base.zk_services(function(services){
             var sig_doc = {}
             sig_doc.name = username+'/'+scriptname
             sig_doc.time = (new Date()).toISOString()
+            sig_doc.id = sig_doc.time + uuid.v4().substr(23)
             sig_doc.type = parts[4]
             sig_doc.msg = body
-            r.table('signals').insert(sig_doc).run(conn, function(err, doc){
+            r.table('signals').insert(sig_doc).run(conn, function(err, result){
               if(err){
-                respond({error: err});
+                respond(JSON.stringify({status:"error", error: err}));
               } else {
-                respond(JSON.stringify(doc));
+                respond(JSON.stringify({status:"ok"}));
               }
             })
           }
