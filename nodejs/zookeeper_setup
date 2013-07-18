@@ -1,6 +1,7 @@
-create /cointhink/services/mtgox_ws tcp://127.0.0.1:3001
+create /cointhink/services/mtgox_ws tcp://172.16.42.1:3001
 create /cointhink/services/script_get tcp://127.0.0.1:3002
-create /cointhink/services/storage_relay tcp://127.0.0.1:3004
+create /cointhink/services/storage_relay_sub tcp://172.16.42.1:3003
+create /cointhink/services/storage_relay_pub tcp://172.16.42.1:3004
 create /cointhink/services/riemann tcp://127.0.0.1:5555 
 create /cointhink/services/redis tcp://127.0.0.1:6379
 create /cointhink/services/rethinkdb tcp://127.0.0.1:28015/cointhink
