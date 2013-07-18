@@ -2,7 +2,8 @@ var base = require('./base')
 base.zk_services(function(services){
 
   var zmq = require('zmq'),
-      sock = zmq.socket('rep')
+      pub_sock = zmq.socket('pub'),
+      sub_sock = zmq.socket('sub')
   var r = require('rethinkdb')
   var redis = require('redis').createClient(services.redis.port, services.redis.hostname)
   console.log('redis configured with '+services.redis.host)
@@ -25,10 +26,13 @@ base.zk_services(function(services){
           console.log("Redis Error " + err);
     })
 
-    sock.on('message', function(data){
-      console.log("REQ: "+data)
+    sub_sock.on('message', function(data){
+      var channel = "C"
+      data = data.toString().substring(channel.length)
+      console.log("SUB: "+data)
       try {
         var message = JSON.parse(data)
+        if(message.action == "ping") { console.log("pong"); respond(message.id, {action:"pong"}); return }
         var payload = message.payload
         var fullname = message.username+"/"+message.scriptname
 
@@ -36,7 +40,7 @@ base.zk_services(function(services){
         r.table('scripts').get(fullname).run(conn, function(err, doc){
           if(err){
             console.log('rethink load error: '+err)
-            respond({"status":"dberr"})
+            respond(message.id,{"status":"dberr"})
           } else {
             console.log(fullname+' rethink doc loaded')
             if(doc){
@@ -45,28 +49,28 @@ base.zk_services(function(services){
                 if(payload.action == 'get'){
                   var value = storage[payload.key]
                   console.log(fullname+' get '+payload.key+' '+value)
-                  respond({"status":"ok", "payload":value})
+                  respond(message.id,{"status":"ok", "payload":value})
                 } else if(payload.action == 'set'){
                   console.log(fullname+' set '+payload.key+' '+payload.value)
                   storage[payload.key] = payload.value
                   r.table('scripts').get(fullname).
                     update({storage:storage}).run(conn, function(status){
                       console.log(fullname+' set '+payload.key+' '+payload.value+' = '+status)
-                      respond({"status":"ok", "payload":status})
+                      respond(message.id,{"status":"ok", "payload":status})
                   })
                 } else if(payload.action == 'load'){
                   console.log(fullname+' load storage, returning '+JSON.stringify(storage))
-                  respond({"status":"ok", "payload":storage})
+                  respond(message.id,{"status":"ok", "payload":storage})
                 } else if(payload.action == 'store'){
                   console.log(fullname+' store storage '+JSON.stringify(payload.storage))
                   if(typeof(payload.storage) == 'object'){
                     r.table('scripts').get(fullname).
                       update({storage:payload.storage}).run(conn, function(status){
                       console.log(fullname+' store storage result '+status)
-                      respond({"status":"ok", "payload":status})
+                      respond(message.id,{"status":"ok", "payload":status})
                     })
                   } else {
-                    respond({"status":"err", "msg":"storage must be an object"})
+                    respond(message.id,{"status":"err", "msg":"storage must be an object"})
                   }
                 } else if(payload.action == 'trade'){
                   console.log(fullname+' trade '+payload.exchange+' '+payload.market+' '+payload.buysell)
@@ -92,40 +96,47 @@ base.zk_services(function(services){
                                                      time:(new Date()).toISOString(),
                                                      type:payload.action,
                                                      msg:trade_msg}).run(conn, function(err){if(err)console.log(err)})
-                          respond(response)
+                          respond(message.id,response)
                         })
                       })
                     } else {
-                      respond(response)
+                      respond(message.id,response)
                     }
                   })
                 } else {
-                  respond({"status":"err", "msg":"unknown action "+payload.action})
+                  respond(message.id,{"status":"err", "msg":"unknown action "+payload.action})
                 }
               } else {
                 console.log(fullname+" bad key!")
-                respond({"status":"badkey"})
+                respond(message.id,{"status":"badkey"})
               }
             } else {
               console.log(fullname+" empty doc!")
-              respond({"status":"nodoc"})
+              respond(message.id,{"status":"nodoc"})
             }
           }
         })
       } catch (ex) {
         console.log(ex+' bad JSON "'+data+'"')
-        respond({"status":"garbled"})
+        respond(message.id,{"status":"garbled"})
       }
 
     })
 
-    sock.connect(services.storage_relay.format());
-    console.log('storage relay connected to dealer on '+services.storage_relay.format())
+    var pub_url = services.storage_relay_pub.format()
+    pub_sock.bindSync(pub_url);
+    console.log('storage relay pub '+pub_url)
+    var sub_url = services.storage_relay_sub.format()
+    sub_sock.bindSync(sub_url);
+    sub_sock.subscribe('C')
+    console.log('storage relay sub '+sub_url)
 
-    function respond(payload){
+    function respond(id, payload){
+      payload.id = id
       var data = JSON.stringify(payload)
-      console.log('REP: '+data)
-      sock.send(data)
+      console.log('PUB: '+data)
+      var channel = 'C'
+      pub_sock.send(channel+data)
     }
 
     //trade('mtgox','btc',4,'buy','usd',92)
