@@ -5,6 +5,8 @@ base.zk_services(function(services){
   var r = require('rethinkdb');
   var fs = require('fs');
   var path = require('path');
+  var redis = require('redis').createClient(services.redis.port, services.redis.hostname)
+  console.log('redis configured with '+services.redis.host)
 
   r.connect({host:services.rethinkdb.hostname,
              port:services.rethinkdb.port,
@@ -82,6 +84,7 @@ base.zk_services(function(services){
               if(err){
                 respond(JSON.stringify({status:"error", error: err}));
               } else {
+                redis_log_push(sig_doc.name, JSON.stringify(sig_doc))
                 respond(JSON.stringify({status:"ok"}));
               }
             })
@@ -96,6 +99,12 @@ base.zk_services(function(services){
             res.statusCode = status
           }
           res.end(doc)
+        }
+
+        function redis_log_push(key, log){
+          var rkey = "log:"+key
+          redis.lpush(rkey, log)
+          redis.ltrim(rkey, 0, 9)
         }
       })
     }
