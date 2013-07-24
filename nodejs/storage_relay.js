@@ -46,33 +46,39 @@ base.zk_services(function(services){
             if(doc){
               var storage = doc.storage
               if(doc.key == message.key){
-                if(payload.action == 'get'){
-                  do_get(payload, function(response){
-                    respond(message.id, response)
-                  })
-                } else if(payload.action == 'set'){
-                  do_set(payload, function(response){
-                    respond(message.id, response)
-                  })
-                } else if(payload.action == 'load'){
-                  do_load(payload, function(response){
-                    respond(message.id, response)
-                  })
-                } else if(payload.action == 'store'){
-                  console.log(fullname+' store storage '+JSON.stringify(payload.storage))
-                  if(typeof(payload.storage) == 'object'){
-                    do_store(payload, function(response){
+                switch(payload.action) {
+                  case 'get':
+                    do_get(payload, function(response){
                       respond(message.id, response)
                     })
-                  } else {
-                    respond(message.id,{"status":"err", "msg":"storage must be an object"})
-                  }
-                } else if(payload.action == 'trade'){
-                  do_trade(payload, function(response){
-                    respond(message.id, response)
-                  })
-                } else {
-                  respond(message.id,{"status":"err", "msg":"unknown action "+payload.action})
+                    break
+                  case 'set':
+                    do_set(payload, function(response){
+                      respond(message.id, response)
+                    })
+                    break
+                  case 'load':
+                    do_load(payload, function(response){
+                      respond(message.id, response)
+                    })
+                    break
+                  case 'store':
+                    console.log(fullname+' store storage '+JSON.stringify(payload.storage))
+                    if(typeof(payload.storage) == 'object'){
+                      do_store(payload, function(response){
+                        respond(message.id, response)
+                      })
+                    } else {
+                      respond(message.id,{"status":"err", "msg":"storage must be an object"})
+                    }
+                    break
+                  case 'trade':
+                    do_trade(payload, function(response){
+                      respond(message.id, response)
+                    })
+                    break
+                  default:
+                    respond(message.id,{"status":"err", "msg":"unknown action "+payload.action})
                 }
               } else {
                 console.log(fullname+" bad key!")
