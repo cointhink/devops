@@ -44,64 +44,32 @@ base.zk_services(function(services){
           } else {
             console.log(fullname+' rethink doc loaded')
             if(doc){
+              var storage = doc.storage
               if(doc.key == message.key){
-                var storage = doc.storage
                 if(payload.action == 'get'){
-                  var value = storage[payload.key]
-                  console.log(fullname+' get '+payload.key+' '+value)
-                  respond(message.id,{"status":"ok", "payload":value})
+                  do_get(payload, function(response){
+                    respond(message.id, response)
+                  })
                 } else if(payload.action == 'set'){
-                  console.log(fullname+' set '+payload.key+' '+payload.value)
-                  storage[payload.key] = payload.value
-                  r.table('scripts').get(fullname).
-                    update({storage:storage}).run(conn, function(status){
-                      console.log(fullname+' set '+payload.key+' '+payload.value+' = '+status)
-                      respond(message.id,{"status":"ok", "payload":status})
+                  do_set(payload, function(response){
+                    respond(message.id, response)
                   })
                 } else if(payload.action == 'load'){
-                  console.log(fullname+' load storage, returning '+JSON.stringify(storage))
-                  respond(message.id,{"status":"ok", "payload":storage})
+                  do_load(payload, function(response){
+                    respond(message.id, response)
+                  })
                 } else if(payload.action == 'store'){
                   console.log(fullname+' store storage '+JSON.stringify(payload.storage))
                   if(typeof(payload.storage) == 'object'){
-                    r.table('scripts').get(fullname).
-                      update({storage:payload.storage}).run(conn, function(status){
-                      console.log(fullname+' store storage result '+status)
-                      respond(message.id,{"status":"ok", "payload":status})
+                    do_store(payload, function(response){
+                      respond(message.id, response)
                     })
                   } else {
                     respond(message.id,{"status":"err", "msg":"storage must be an object"})
                   }
                 } else if(payload.action == 'trade'){
-                  console.log(fullname+' trade '+payload.exchange+' '+payload.market+' '+payload.buysell)
-                  var hashname = payload.exchange.toLowerCase()+"-ticker-"+
-                                 payload.market.toUpperCase()+
-                                 payload.currency.toUpperCase()
-                  redis.hgetall(hashname, function(err,ticker){
-                    console.log('redis return '+JSON.stringify(ticker))
-                    var response = trade(payload, doc.inventory, ticker)
-                    if(response.status == 'ok'){
-                      console.log("prepending trades with "+JSON.stringify(response.payload.trade))
-                      r.table('scripts').get(fullname)('trades').
-                      prepend(response.payload.trade).run(conn, function(err, trades){
-                        console.log('prepend trades done. size '+trades.length)
-                        if(err) { console.log('rethink prepend error: '+err) }
-                        console.log('updating inventory with '+JSON.stringify(doc.inventory))
-                        r.table('scripts').get(fullname).
-                        update({inventory:doc.inventory}).run(conn, function(err){
-                          console.log('update inventory done')
-                          if(err) { console.log('rethink update inventory error: '+err) }
-                          var trade_msg = "["+payload.exchange+"] "+payload.buysell+" "+payload.quantity+payload.market+"@"+payload.amount+payload.currency
-                          r.table('signals').insert({name:fullname,
-                                                     time:(new Date()).toISOString(),
-                                                     type:payload.action,
-                                                     msg:trade_msg}).run(conn, function(err){if(err)console.log(err)})
-                          respond(message.id,response)
-                        })
-                      })
-                    } else {
-                      respond(message.id,response)
-                    }
+                  do_trade(payload, function(response){
+                    respond(message.id, response)
                   })
                 } else {
                   respond(message.id,{"status":"err", "msg":"unknown action "+payload.action})
@@ -110,11 +78,78 @@ base.zk_services(function(services){
                 console.log(fullname+" bad key!")
                 respond(message.id,{"status":"badkey"})
               }
+
+              function do_get(payload, cb){
+                var value = storage[payload.key]
+                console.log(fullname+' get '+payload.key+' '+value)
+                cb({"status":"ok", "payload":value})
+              }
+
+              function do_set(payload, cb){
+                console.log(fullname+' set '+payload.key+' '+payload.value)
+                storage[payload.key] = payload.value
+                r.table('scripts').get(fullname).
+                  update({storage:storage}, {return_vals:true}).
+                  run(conn, function(status){
+                    console.log(fullname+' set '+payload.key+' '+payload.value+' = '+status)
+                    cb({"status":"ok", "payload":status})
+                })
+              }
+
+              function do_load(payload, cb){
+                console.log(fullname+' load storage callback returned: '+JSON.stringify(storage))
+                cb({"status":"ok", "payload":storage})
+              }
+
+              function do_store(payload, cb){
+                r.table('scripts').get(fullname).
+                  update({storage:payload.storage}, {return_vals:true}).
+                  run(conn, function(status){
+                    console.log(fullname+' store storage result '+status)
+                    cb({"status":"ok", "payload":status})
+                })
+              }
+
+
+              function do_trade(payload, cb){
+                console.log(fullname+' trade '+payload.exchange+' '+payload.market+' '+payload.buysell)
+                var hashname = payload.exchange.toLowerCase()+"-ticker-"+
+                               payload.market.toUpperCase()+
+                               payload.currency.toUpperCase()
+                redis.hgetall(hashname, function(err,ticker){
+                  console.log('redis return '+JSON.stringify(ticker))
+                  var response = trade(payload, doc.inventory, ticker)
+                  if(response.status == 'ok'){
+                    console.log("prepending trades with "+JSON.stringify(response.payload.trade))
+                    r.table('scripts').get(fullname)('trades').
+                    prepend(response.payload.trade).run(conn, function(err, trades){
+                      console.log('prepend trades done. size '+trades.length)
+                      if(err) { console.log('rethink prepend error: '+err) }
+                      console.log('updating inventory with '+JSON.stringify(doc.inventory))
+                      r.table('scripts').get(fullname).
+                      update({inventory:doc.inventory}).run(conn, function(err, result){
+                        console.log('update inventory done '+JSON.stringify(result))
+                        if(err) { console.log('rethink update inventory error: '+err) }
+                        var trade_msg = "["+payload.exchange+"] "+payload.buysell+" "+payload.quantity+payload.market+"@"+payload.amount+payload.currency
+                        r.table('signals').insert({name:fullname,
+                                                   time:(new Date()).toISOString(),
+                                                   type:payload.action,
+                                                   msg:trade_msg}).run(conn, function(err){if(err)console.log(err)})
+                        cb(response)
+                      })
+                    })
+                  } else {
+                    cb(response)
+                  }
+                })
+              }
+
             } else {
               console.log(fullname+" empty doc!")
               respond(message.id,{"status":"nodoc"})
             }
           }
+
         })
       } catch (ex) {
         console.log(ex+' bad JSON "'+data+'"')
