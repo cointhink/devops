@@ -139,7 +139,7 @@ base.zk_services(function(services){
                       console.log('prepend trades done. size '+trades.length)
                       if(err) { console.log('rethink prepend error: '+err) }
                       console.log('updating inventory with '+JSON.stringify(doc.inventory))
-                      r.table(storage_tablename).get(fullname).
+                      r.table('scripts').get(fullname).
                       update({inventory:doc.inventory}).run(conn, function(err, result){
                         console.log('update inventory done '+JSON.stringify(result))
                         if(err) { console.log('rethink update inventory error: '+err) }
