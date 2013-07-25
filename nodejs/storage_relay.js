@@ -13,6 +13,7 @@ base.zk_services(function(services){
              port:services.rethinkdb.port,
              db:services.rethinkdb.path.substr(1)}, function(err, conn) {
     console.log('rethinkdb configured with '+services.rethinkdb.format())
+    var storage_tablename = 'storage'
 
     conn.addListener('error', function(e) {
       console.log("rethinkdb error: "+e)
@@ -44,7 +45,6 @@ base.zk_services(function(services){
           } else {
             console.log(fullname+' rethink doc loaded')
             if(doc){
-              var storage = doc.storage
               if(doc.key == message.key){
                 switch(payload.action) {
                   case 'get':
@@ -86,16 +86,20 @@ base.zk_services(function(services){
               }
 
               function do_get(payload, cb){
-                var value = storage[payload.key]
-                console.log(fullname+' get '+payload.key+' '+value)
-                cb({"status":"ok", "payload":value})
+                r.table(storage_tablename).get(fullname)(payload.key).run(conn, function(err, value){
+                  console.log(fullname+' get '+payload.key+' '+value)
+                  cb({"status":"ok", "payload":value})
+                })
               }
 
               function do_set(payload, cb){
-                console.log(fullname+' set '+payload.key+' '+payload.value)
-                storage[payload.key] = payload.value
-                r.table('scripts').get(fullname).
-                  update({storage:storage}, {return_vals:true}).
+                console.log(fullname+' set '+payload.key+' = '+payload.value)
+                var update_hash = {}
+                if(payload.key != "_cointhink_key_"){
+                  update_hash[payload.key] = payload.value
+                }
+                r.table(storage_tablename).get(fullname).
+                  update(update_hash, {return_vals:true}).
                   run(conn, function(status){
                     console.log(fullname+' set '+payload.key+' '+payload.value+' = '+status)
                     cb({"status":"ok", "payload":status})
@@ -103,19 +107,21 @@ base.zk_services(function(services){
               }
 
               function do_load(payload, cb){
-                console.log(fullname+' load storage callback returned: '+JSON.stringify(storage))
-                cb({"status":"ok", "payload":storage})
+                r.table(storage_tablename).get(fullname).run(conn, function(err, storage){
+                  console.log(fullname+' load storage callback returned: '+JSON.stringify(storage))
+                  cb({"status":"ok", "payload":storage})
+                })
               }
 
               function do_store(payload, cb){
-                r.table('scripts').get(fullname).
-                  update({storage:payload.storage}, {return_vals:true}).
+                delete payload.storage['_cointhink_id_']
+                r.table(storage_tablename).get(fullname).
+                  update(payload.storage, {return_vals:true}).
                   run(conn, function(status){
                     console.log(fullname+' store storage result '+status)
                     cb({"status":"ok", "payload":status})
                 })
               }
-
 
               function do_trade(payload, cb){
                 console.log(fullname+' trade '+payload.exchange+' '+payload.market+' '+payload.buysell)
@@ -132,7 +138,7 @@ base.zk_services(function(services){
                       console.log('prepend trades done. size '+trades.length)
                       if(err) { console.log('rethink prepend error: '+err) }
                       console.log('updating inventory with '+JSON.stringify(doc.inventory))
-                      r.table('scripts').get(fullname).
+                      r.table(storage_tablename).get(fullname).
                       update({inventory:doc.inventory}).run(conn, function(err, result){
                         console.log('update inventory done '+JSON.stringify(result))
                         if(err) { console.log('rethink update inventory error: '+err) }
