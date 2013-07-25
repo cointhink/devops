@@ -108,6 +108,7 @@ base.zk_services(function(services){
 
               function do_load(payload, cb){
                 r.table(storage_tablename).get(fullname).run(conn, function(err, storage){
+                  delete storage['_cointhink_id_']
                   console.log(fullname+' load storage callback returned: '+JSON.stringify(storage))
                   cb({"status":"ok", "payload":storage})
                 })
