@@ -224,6 +224,8 @@ base.zk_services(function(services){
             } else {
               result = {"status":"err", payload:"no "+payload.market+" in inventory"}
             }
+          } else {
+            result = {"status":"err", payload:"buy/sell field was not buy or sell"}
           }
         } else {
           result = {"status":"err", payload:"price of "+payload.amount+" is more than 1% away from exchange "+payload.exchange+" price "+ticker.value}
