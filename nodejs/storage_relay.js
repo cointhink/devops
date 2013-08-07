@@ -131,6 +131,7 @@ base.zk_services(function(services){
                                payload.currency.toUpperCase()
                 redis.hgetall(hashname, function(err,ticker){
                   console.log('redis return '+JSON.stringify(ticker))
+                  payload.trade_date = (new Date()).toISOString()
                   var response = trade(payload, doc.inventory, ticker)
                   if(response.status == 'ok'){
                     console.log("prepending trades with "+JSON.stringify(response.payload.trade))
@@ -148,6 +149,7 @@ base.zk_services(function(services){
                                                    time:(new Date()).toISOString(),
                                                    type:payload.action,
                                                    msg:trade_msg}).run(conn, function(err){if(err)console.log(err)})
+                        redis_trade_push(fullname, JSON.stringify(payload))
                         cb(response)
                       })
                     })
@@ -237,5 +239,10 @@ base.zk_services(function(services){
       return result
     }
 
+    function redis_trade_push(key, trade_json){
+      var rkey = "trade:"+key
+      redis.lpush(rkey, trade_json)
+      redis.ltrim(rkey, 0, 9)
+    }
   })
 })
