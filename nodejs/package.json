@@ -11,6 +11,7 @@
     "riemann":"*",
     "socket.io-client":"*",
     "uuid":"*",
+    "protobuf":"*",
     "websocket":"*",
     "zkjs":"*",
     "zmq":"*"

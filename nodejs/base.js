@@ -2,8 +2,9 @@ module.exports = new (function(){
   var url = require('url')
   var async = require('async')
   var ZK = require('zkjs')
-  var zk = new ZK({root: '/cointhink'})
+  var zk = new ZK({root: '/cointhink', timeout: 1000, requestTimeout: 1000})
 
+  console.log("connecting to zookeeper")
   this.zk_services = function(cb){
     zk.start(function(err){
       if(err){
