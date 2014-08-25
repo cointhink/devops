@@ -1,0 +1,8 @@
+wget http://download.zeromq.org/zeromq-3.2.4.tar.gz
+tar xf zeromq-3.2.4.tar.gz
+cd zeromq-3.2.4
+./configure --prefix=`pwd`
+make
+cd ..
+
+CXXFLAGS=-I`pwd`/zeromq-3.2.4/include/ LDFLAGS=-L`pwd`/zeromq-3.2.4/src/.libs npm install zmq
