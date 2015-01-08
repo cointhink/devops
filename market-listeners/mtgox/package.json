@@ -1,0 +1,19 @@
+{
+  "name": "webapp-webhead",
+  "version":"0.0.1",
+  "private": true,
+  "dependencies": {
+    "async":"*",
+    "forever":"latest",
+    "mtgox-orderbook":"*",
+    "redis":"*",
+    "rethinkdb":">=1.7.0-2",
+    "riemann":"*",
+    "socket.io-client":"*",
+    "uuid":"*",
+    "protobuf":"*",
+    "websocket":"*",
+    "zkjs":"*",
+    "zmq":"*"
+  }
+}
