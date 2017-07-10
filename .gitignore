@@ -1,2 +1,4 @@
 /nodejs/node_modules
 /nodejs/npm
+/terraform/vultr-cli
+/terraform/*.key
