@@ -2,3 +2,6 @@
 /nodejs/npm
 /terraform/vultr-cli
 /terraform/*.key
+/terraform/.terraform/
+/terraform/terraform.tfstate
+

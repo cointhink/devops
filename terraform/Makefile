@@ -1,3 +1,9 @@
+plan:
+	PATH=./vultr-cli/bin terraform plan
+
+apply:
+	PATH=./vultr-cli/bin terraform apply
+
 vultr-cli/terraform-provider-vultr:
 	mkdir -p vultr-cli && \
 	cd vultr-cli && \
