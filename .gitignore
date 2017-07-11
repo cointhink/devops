@@ -3,5 +3,5 @@
 /terraform/vultr-cli
 /terraform/*.key
 /terraform/.terraform/
-/terraform/terraform.tfstate
+/terraform/terraform.tfstate*
 
