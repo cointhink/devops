@@ -1,0 +1,6 @@
+---
+- hosts: web
+  sudo: yes
+  tasks:
+    - action: apt pkg=software-properties-common state=present
+
