@@ -12,4 +12,7 @@
     ansible_ssh_private_key_file: "../../terraform/root_ssh.key"
   tasks:
     - action: apt pkg=python2.7 state=present
-
+    - user:
+        name: devops
+        generate_ssh_key: yes
+        ssh_key_type: ed25519
