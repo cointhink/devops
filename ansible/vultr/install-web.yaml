@@ -1,0 +1,24 @@
+- hosts: web
+  become_user: root
+  vars:
+    ansible_ssh_user: root
+    ansible_ssh_private_key_file: "../../terraform/root_ssh.key"
+  tasks:
+    - apt_key:
+        url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+    - name: "node 6 repository"
+      apt_repository:
+        repo: deb https://deb.nodesource.com/node_6.x xenial main
+    - name: "apt update"
+      apt:
+         update_cache: yes
+
+    - name: "install build-essential"
+      apt:
+        pkg: build-essential
+    - name: "install golang"
+      apt:
+        pkg: golang
+    - name: "install nodejs"
+      apt:
+        pkg: nodejs
