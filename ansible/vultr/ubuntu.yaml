@@ -1,0 +1,18 @@
+---
+- hosts: web algo db
+  become_user: root
+  gather_facts: no # no python yet
+  pre_tasks:
+    - name: 'install python2'
+      raw: apt-get -y install python-simplejson
+    - action: setup
+
+  vars:
+    ansible_ssh_user: root
+    ansible_ssh_private_key_file: "../../terraform/root_ssh.key"
+  tasks:
+    - user:
+        name: devops
+        generate_ssh_key: yes
+        ssh_key_type: ed25519
+
