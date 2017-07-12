@@ -1,6 +1,6 @@
 /nodejs/node_modules
 /nodejs/npm
-/devops/ansible/vultr/*retry
+/ansible/vultr/*retry
 /terraform/vultr-cli
 /terraform/*.key
 /terraform/.terraform/

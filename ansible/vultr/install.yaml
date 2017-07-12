@@ -1,0 +1,25 @@
+---
+- hosts: web
+  become_user: devops
+  vars:
+    ansible_ssh_user: root
+    ansible_ssh_private_key_file: "../../terraform/root_ssh.key"
+  tasks:
+    - name: 'git clone api-go'
+      git:
+        repo: 'https://github.com/cointhink/api-go'
+        dest: /home/devops/api-go
+    - name: 'git clone web-elm'
+      git:
+        repo: 'https://github.com/cointhink/web-elm'
+        dest: /home/devops/web-elm
+
+    - name: 'go deps install'
+      shell: make install
+      args:
+        chdir: /home/devops/api-go
+
+    - name: 'elm install'
+      shell: make install
+      args:
+        chdir: /home/devops/web-elm
