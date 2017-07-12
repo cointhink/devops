@@ -19,6 +19,7 @@ resource "vultr_server" "cointhink_web_1" {
   ssh_key_ids = ["${vultr_ssh_key.cointhink.id}"]
 }
 
+/*
 resource "vultr_server" "cointhink_algo_1" {
   name = "cointhink algo 1"
   region_id = "${var.region}"
@@ -29,6 +30,7 @@ resource "vultr_server" "cointhink_algo_1" {
   private_networking = true
   ssh_key_ids = ["${vultr_ssh_key.cointhink.id}"]
 }
+*/
 
 resource "vultr_server" "cointhink_db_1" {
   name = "cointhink db 1"
