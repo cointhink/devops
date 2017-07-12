@@ -1,0 +1,23 @@
+#cloud-config
+ssh_authorized_keys:
+  - ${ssh_key}
+
+hostname: db1
+
+coreos:
+  update:
+    reboot-strategy: best-effort
+  units:
+    - name: cockroach-docker.service
+      command: start
+      content: |
+        [Unit]
+        Description=Starts cockroachdb
+        After=docker.service
+        Requires=docker.service
+        [Service]
+        Restart=always
+        ExecStart=/usr/bin/docker run --rm -p 8081:8080 -p 26257:26257 -v /mnt/ocean/cockroach:/cockroach/cockroach-data cockroachdb/cockroach:latest start --insecure --advertise-host=10.9.8.117 --join=10.9.8.116
+        [Install]
+        WantedBy=local.target
+
