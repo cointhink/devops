@@ -6,9 +6,15 @@
   tasks:
     - apt_key:
         url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
-    - name: "node 6 repository"
+    - name: "nodejs repo"
       apt_repository:
         repo: deb https://deb.nodesource.com/node_6.x xenial main
+    - name: "golang repo"
+      apt_repository:
+        repo: "ppa:gophers/archive"
+    - name: "nginx repo"
+      apt_repository:
+        repo: "ppa:nginx/stable"
     - name: "apt update"
       apt:
          update_cache: yes
@@ -16,9 +22,35 @@
     - name: "install build-essential"
       apt:
         pkg: build-essential
-    - name: "install golang"
+    - name: "install golang 1.8"
       apt:
-        pkg: golang
-    - name: "install nodejs"
+        pkg: golang-1.8
+    - file: path=/usr/bin/go src=/usr/lib/go-1.8/bin/go state=link
+    - file: path=/home/devops/letsencrypt state=directory owner=devops
+    - name: "install nodejs 6"
       apt:
         pkg: nodejs
+
+    - file: path=/home/devops/letsencrypt state=directory owner=devops
+    - name: 'lego install'
+      become: yes
+      become_user: devops
+      shell: GOPATH=`pwd` go get -u github.com/xenolf/lego
+      args:
+        chdir: /home/devops/letsencrypt
+
+    - name: "install nginx"
+      apt:
+        pkg: nginx-full
+    - file: path=/etc/nginx/sites-available state=absent
+    - file: path=/etc/nginx/sites-enabled state=absent
+    - file: path=/etc/nginx/sites state=directory
+    - name: "nginx config"
+      copy:
+        src: ./nginx/
+        dest: /etc/nginx/
+    - name: "restart nginx"
+      service:
+        name: nginx
+        state: restarted
+
