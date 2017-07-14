@@ -1,4 +1,8 @@
-## Backend Services for CoinThink
+## Devops (Jul 2017)
+/terraform
+/ansible
+
+## Backend Services for CoinThink (Aug 2014)
 
 ```
 /nodejs node scripts
