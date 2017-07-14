@@ -2,7 +2,7 @@
 vultr-web-1.cointhink.com
 
 [algo]
-vultr-algo-1.cointhink.com
+#vultr-algo-1.cointhink.com
 
 [db]
 vultr-db-1.cointhink.com
