@@ -1,6 +1,6 @@
 server {
   listen 80;
-  root /home/devops/letsencrypt;
+  root /home/devops/letsencrypt/webroot;
   location /.well-known {
     try_files $uri =404;
   }

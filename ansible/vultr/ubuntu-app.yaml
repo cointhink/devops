@@ -31,13 +31,19 @@
       apt:
         pkg: nodejs
 
-    - file: path=/home/devops/letsencrypt state=directory owner=devops
+    - file: path=/home/devops/letsencrypt/webroot/.well-known state=directory owner=devops group=devops
     - name: 'lego install'
       become: yes
       become_user: devops
       shell: GOPATH=`pwd` go get -u github.com/xenolf/lego
       args:
         chdir: /home/devops/letsencrypt
+    - file: path=/home/devops/letsencrypt/pkg state=absent
+    - file: path=/home/devops/letsencrypt/src state=absent
+    - name: "letsencrypt key"
+      copy:
+        src: ../../terraform/letsencrypt.key/
+        dest: /home/devops/letsencrypt
 
     - name: "install nginx"
       apt:
