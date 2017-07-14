@@ -3,6 +3,10 @@ plan: vultr-cli/bin root_ssh.key
 
 apply: vultr-cli/bin root_ssh.key
 	./vultr-cli/bin/terraform apply
+	./dns-update.sh
+
+destroy: vultr-cli/bin root_ssh.key
+	./vultr-cli/bin/terraform destroy
 
 dns:
 	dns-update.sh
