@@ -1,4 +1,4 @@
-cat dns.key | while read keyline
+cat dns.key | egrep -v '^#' | while read keyline
 do
  box=`echo $keyline | cut -d' ' -f1`
  domain=`echo $keyline | cut -d' ' -f2`
