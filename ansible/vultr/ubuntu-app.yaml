@@ -35,7 +35,7 @@
     - name: 'lego install'
       become: yes
       become_user: devops
-      shell: GOPATH=`pwd` go get -u github.com/xenolf/lego
+      shell: GOPATH=`pwd` test -f bin/lego || go get -u github.com/xenolf/lego
       args:
         chdir: /home/devops/letsencrypt
     - file: path=/home/devops/letsencrypt/pkg state=absent
@@ -43,7 +43,13 @@
     - name: "letsencrypt key"
       copy:
         src: ../../terraform/letsencrypt.key/
-        dest: /home/devops/letsencrypt
+        dest: /home/devops/letsencrypt/accounts/acme-v01.api.letsencrypt.org/
+    - name: 'lego run cert'
+      become: yes
+      become_user: devops
+      shell: ./bin/lego --path . --email letsencrypt@cointhink.com --domains cointhink.com --domains vultr-web-1.cointhink.com --webroot webroot run
+      args:
+        chdir: /home/devops/letsencrypt
 
     - name: "install nginx"
       apt:

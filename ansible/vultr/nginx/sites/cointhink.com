@@ -3,8 +3,8 @@ server {
   listen [::]:443 ssl http2;
   server_name cointhink.com *.cointhink.com;
 
-#  ssl_certificate /home/devops/letsencrypt/certificates/cointhink.com.crt;
-#  ssl_certificate_key /home/devops/letsencrypt/certificates/cointhink.com.key;
+  ssl_certificate /home/devops/letsencrypt/certificates/cointhink.com.crt;
+  ssl_certificate_key /home/devops/letsencrypt/certificates/cointhink.com.key;
 
   root /home/devops/web-elm/public;
 

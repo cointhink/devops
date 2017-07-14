@@ -1,0 +1,16 @@
+---
+- hosts: web
+  become: true
+  become_user: devops
+  vars:
+    ansible_ssh_user: root
+    ansible_ssh_private_key_file: "../../terraform/root_ssh.key"
+  tasks:
+    - name: 'git pull web-elm'
+      git:
+        repo: 'https://github.com/cointhink/web-elm'
+        dest: /home/devops/web-elm
+    - name: 'elm make'
+      shell: make
+      args:
+        chdir: /home/devops/web-elm
