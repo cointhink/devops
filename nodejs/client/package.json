@@ -1,0 +1,8 @@
+{
+  "name": "ctead",
+  "version":"0.0.1",
+  "private": true,
+  "dependencies": {
+    "cointhink":"http://localhost:3002/npm/cointhink.tar.gz"
+  }
+}
