@@ -22,6 +22,3 @@
       shell: make
       args:
         chdir: /home/devops/api-go
-    - name: start api-go service
-      systemd: state=started name=cointhink-api
-

@@ -13,7 +13,7 @@
     - name: "api-go config.hjson"
       template:
         src: ../../terraform/config.hjson.jinja.key
-        dest: /home/devops/api-go
+        dest: /home/devops/api-go/config.hjson
     - name: 'git clone web-elm'
       git:
         repo: 'https://github.com/cointhink/web-elm'

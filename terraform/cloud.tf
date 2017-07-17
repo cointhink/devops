@@ -17,6 +17,7 @@ resource "vultr_server" "cointhink_web_1" {
   ipv6 = true
   private_networking = true
   ssh_key_ids = ["${vultr_ssh_key.cointhink.id}"]
+  ipv4_private_address = "10.0.0.1"
 }
 
 resource "vultr_server" "cointhink_lxd_1" {
@@ -28,6 +29,7 @@ resource "vultr_server" "cointhink_lxd_1" {
   ipv6 = true
   private_networking = true
   ssh_key_ids = ["${vultr_ssh_key.cointhink.id}"]
+  ipv4_private_address = "10.0.0.2"
 }
 
 resource "vultr_server" "cointhink_db_1" {
@@ -40,6 +42,7 @@ resource "vultr_server" "cointhink_db_1" {
   private_networking = true
   ssh_key_ids = ["${vultr_ssh_key.cointhink.id}"]
   user_data = "${data.template_file.coreos_db.rendered}"
+  ipv4_private_address = "10.0.0.3"
 }
 
 data "template_file" "coreos_db" {
