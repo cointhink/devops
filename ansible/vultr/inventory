@@ -1,8 +1,8 @@
 [web]
 vultr-web-1.cointhink.com
 
-[algo]
-#vultr-algo-1.cointhink.com
+[lxd]
+vultr-lxd-1.cointhink.com
 
 [db]
 vultr-db-1.cointhink.com

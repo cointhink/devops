@@ -10,6 +10,10 @@
       git:
         repo: 'https://github.com/cointhink/api-go'
         dest: /home/devops/api-go
+    - name: "api-go config.hjson"
+      template:
+        src: ../../terraform/config.hjson.jinja.key
+        dest: /home/devops/api-go
     - name: 'git clone web-elm'
       git:
         repo: 'https://github.com/cointhink/web-elm'

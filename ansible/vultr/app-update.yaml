@@ -14,3 +14,14 @@
       shell: make
       args:
         chdir: /home/devops/web-elm
+    - name: 'git pull api-go'
+      git:
+        repo: 'https://github.com/cointhink/api-go'
+        dest: /home/devops/api-go
+    - name: 'api-go make'
+      shell: make
+      args:
+        chdir: /home/devops/api-go
+    - name: start api-go service
+      systemd: state=started name=cointhink-api
+

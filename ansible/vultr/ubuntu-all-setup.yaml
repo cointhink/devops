@@ -1,5 +1,5 @@
 ---
-- hosts: web algo
+- hosts: web lxd
   become_user: root
   gather_facts: no # no python yet
   pre_tasks:

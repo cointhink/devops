@@ -66,3 +66,8 @@
         name: nginx
         state: restarted
 
+    - name: install cointhink api systemd unit file
+      template:
+        src: cointhink-api.service.jinja
+        dest: /etc/systemd/system/cointhink-api.service
+
