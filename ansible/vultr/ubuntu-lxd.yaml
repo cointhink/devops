@@ -55,6 +55,6 @@
     - name: "protobuf build"
       become: true
       become_user: devops
-      shell: make protoc
+      shell: make
       args:
         chdir: /home/devops/protobuf
