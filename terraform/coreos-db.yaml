@@ -6,8 +6,16 @@ hostname: db1
 
 coreos:
   update:
-    reboot-strategy: best-effort
+    reboot-strategy: off
   units:
+    - name: 20-eth1-static.network
+      contents: |
+        [Match]
+        Name=eth1
+
+        [Network]
+        Address=10.0.0.3
+
     - name: mnt-ocean.mount
       command: start
       content: |
@@ -27,7 +35,7 @@ coreos:
         Requires=docker.service
         [Service]
         Restart=always
-        ExecStart=/usr/bin/docker run --rm -p 8081:8080 -p 26257:26257 -v /mnt/ocean/cockroach:/cockroach/cockroach-data cockroachdb/cockroach:latest start --insecure --advertise-host=10.9.8.117 --join=10.9.8.116
+        ExecStart=/usr/bin/docker run --rm -p 8081:8080 -p 26257:26257 -v /mnt/ocean/cockroach:/cockroach/cockroach-data cockroachdb/cockroach:latest start --insecure
         [Install]
         WantedBy=local.target
 
