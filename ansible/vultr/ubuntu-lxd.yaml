@@ -17,6 +17,19 @@
       user:
         name: devops
         groups: lxd
-    - name: "lxd init"
+    - name: "lxd config https"
       become_user: devops
       shell: lxc config set core.https_address :8443
+# todo: selfsigned key gen; scp; lxc config trust add /tmp/client.crt
+    - name: 'git clone lxd-container'
+      git:
+        repo: 'https://github.com/cointhink/lxd-container'
+        dest: /home/devops/lxd-container
+    - name: 'git clone scripting'
+      git:
+        repo: 'https://github.com/cointhink/scripting'
+        dest: /home/devops/scripting
+    - name: 'git clone protobuf'
+      git:
+        repo: 'https://github.com/cointhink/protobuf'
+        dest: /home/devops/protobuf
