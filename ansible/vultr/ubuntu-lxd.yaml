@@ -13,3 +13,10 @@
     - name: "install lxd"
       apt:
         pkg: lxd
+    - name: "lxd user group"
+      user:
+        name: devops
+        groups: lxd
+    - name: "lxd init"
+      become_user: devops
+      shell: lxc config set core.https_address :8443
