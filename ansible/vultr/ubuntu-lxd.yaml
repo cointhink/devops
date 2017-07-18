@@ -23,6 +23,7 @@
     - name: "install lxd"
       apt:
         pkg: lxd
+#todo: lxd init (create lxdbr0)
     - name: "install unzip"
       apt:
         pkg: unzip
