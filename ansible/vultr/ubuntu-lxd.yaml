@@ -7,6 +7,9 @@
     - name: "golang repo"
       apt_repository:
         repo: "ppa:gophers/archive"
+    - name: "lxd repo"
+      apt_repository:
+        repo: "ppa:ubuntu-lxc/lxd-stable"
     - name: "apt update"
       apt:
          update_cache: yes
@@ -49,3 +52,9 @@
       git:
         repo: 'https://github.com/cointhink/protobuf'
         dest: /home/devops/protobuf
+    - name: "protobuf build"
+      become: true
+      become_user: devops
+      shell: make protoc
+      args:
+        chdir: /home/devops/protobuf
