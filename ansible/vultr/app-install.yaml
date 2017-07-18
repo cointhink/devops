@@ -6,9 +6,6 @@
     ansible_ssh_user: root
     ansible_ssh_private_key_file: "../../terraform/root_ssh.key"
   tasks:
-    - name: create self-signed SSL cert
-      shell: openssl req -new -nodes -x509 -subj "/C=US/ST=Oregon/L=Portland/O=IT/CN=${ansible_fqdn}" -days 3650 -keyout /home/devops/clientssl/client.key -out /home/devops/clientssl/client.crt -extensions v3_ca creates=/home/devops/clientssl/client.crt
-
     - name: 'git clone api-go'
       git:
         repo: 'https://github.com/cointhink/api-go'

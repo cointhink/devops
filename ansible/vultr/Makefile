@@ -3,6 +3,6 @@ update:
 
 install:
 	./play ubuntu-all-setup.yaml
-	./play ubuntu-lxd.yaml
 	./play ubuntu-web.yaml
+	./play ubuntu-lxd.yaml
 	./play app-install.yaml

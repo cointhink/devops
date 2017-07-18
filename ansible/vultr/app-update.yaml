@@ -22,3 +22,9 @@
       shell: make
       args:
         chdir: /home/devops/api-go
+    - name: "cointhink-api restart"
+      become: true
+      become_user: root
+      service:
+        name: cointhink-api
+        state: restarted
