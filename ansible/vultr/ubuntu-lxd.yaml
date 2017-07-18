@@ -4,15 +4,25 @@
     ansible_ssh_user: root
     ansible_ssh_private_key_file: "../../terraform/root_ssh.key"
   tasks:
+    - name: "golang repo"
+      apt_repository:
+        repo: "ppa:gophers/archive"
     - name: "apt update"
       apt:
          update_cache: yes
     - name: "install build-essential"
       apt:
         pkg: build-essential
+    - name: "install golang 1.8"
+      apt:
+        pkg: golang-1.8
+    - file: path=/usr/bin/go src=/usr/lib/go-1.8/bin/go state=link
     - name: "install lxd"
       apt:
         pkg: lxd
+    - name: "install unzip"
+      apt:
+        pkg: unzip
     - name: "lxd user group"
       user:
         name: devops
@@ -22,14 +32,20 @@
       shell: lxc config set core.https_address :8443
 # todo: selfsigned key gen; scp; lxc config trust add /tmp/client.crt
     - name: 'git clone lxd-container'
+      become: true
+      become_user: devops
       git:
         repo: 'https://github.com/cointhink/lxd-container'
         dest: /home/devops/lxd-container
     - name: 'git clone scripting'
+      become: true
+      become_user: devops
       git:
         repo: 'https://github.com/cointhink/scripting'
         dest: /home/devops/scripting
     - name: 'git clone protobuf'
+      become: true
+      become_user: devops
       git:
         repo: 'https://github.com/cointhink/protobuf'
         dest: /home/devops/protobuf
