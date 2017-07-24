@@ -81,5 +81,5 @@
     - name: create clientssl folder
       file: path=/home/devops/clientssl state=directory owner=devops group=devops
     - name: create self-signed SSL cert
-      shell: openssl req -new -nodes -x509 -subj "/C=US/ST=Oregon/L=Portland/O=IT/CN=${ansible_hostname}" -days 3650 -keyout /home/devops/clientssl/client.key -out /home/devops/clientssl/client.crt -extensions v3_ca creates=/home/devops/clientssl/client.crt
+      shell: openssl req -new -nodes -x509 -subj "/C=US/ST=Oregon/O=CoinThink/CN={{ansible_hostname}}" -days 3650 -keyout /home/devops/clientssl/client.key -out /home/devops/clientssl/client.crt -extensions v3_ca creates=/home/devops/clientssl/client.crt
 
