@@ -69,6 +69,10 @@
         name: nginx
         state: restarted
 
+    - name: "install postfix"
+      apt:
+        pkg: postfix
+
     - name: install cointhink api systemd unit file
       template:
         src: cointhink-api.service.jinja
