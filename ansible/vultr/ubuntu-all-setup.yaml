@@ -11,6 +11,15 @@
     ansible_ssh_user: root
     ansible_ssh_private_key_file: "../../terraform/root_ssh.key"
   tasks:
+    - name: "hostname {{inventory_hostname}}"
+      hostname:
+        name: "{{inventory_hostname}}"
+
+    - name: "/etc/hosts"
+      copy:
+        src: ../../terraform/hosts.key
+        dest: /etc/hosts
+
     - name: "create devops unix user"
       user:
         name: devops
