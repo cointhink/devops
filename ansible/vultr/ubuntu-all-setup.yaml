@@ -20,6 +20,11 @@
         src: ../../terraform/hosts.key
         dest: /etc/hosts
 
+    - name: "syslog restart"
+      service:
+        name: rsyslog
+        state: restarted
+
     - name: "create devops unix user"
       user:
         name: devops
