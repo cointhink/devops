@@ -11,7 +11,7 @@ resource "vultr_ssh_key" "cointhink" {
 resource "vultr_server" "cointhink_web_1" {
   name = "cointhink web 1"
   region_id = "${var.region}"
-  os_id = 231 #	Ubuntu 16.10
+  os_id = 215 #	Ubuntu 16.04
   plan_id = 201 # $5/mo,1GB ram, 25GB disk
 
   ipv6 = true
@@ -22,7 +22,7 @@ resource "vultr_server" "cointhink_web_1" {
 resource "vultr_server" "cointhink_lxd_1" {
   name = "cointhink lxd 1"
   region_id = "${var.region}"
-  os_id = 231 #	Ubuntu 16.10
+  os_id = 215 #	Ubuntu 16.04
   plan_id = 201 # $5/mo,1GB ram, 25GB disk
 
   ipv6 = true
