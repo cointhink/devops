@@ -43,7 +43,7 @@
       file: path=/home/devops/letsencrypt/pkg state=absent
     - name: remove local src/
       file: path=/home/devops/letsencrypt/src state=absent
-    - name: "letsencrypt key"
+    - name: "letsencrypt key install"
       copy:
         src: ../../terraform/letsencrypt.key/
         dest: /home/devops/letsencrypt/accounts/acme-v01.api.letsencrypt.org/
@@ -78,6 +78,8 @@
         src: cointhink-api.service.jinja
         dest: /etc/systemd/system/cointhink-api.service
 
+    - name: create clientssl folder
+      file: path=/home/devops/clientssl state=directory owner=devops group=devops
     - name: create self-signed SSL cert
-      shell: openssl req -new -nodes -x509 -subj "/C=US/ST=Oregon/L=Portland/O=IT/CN=${ansible_fqdn}" -days 3650 -keyout /home/devops/clientssl/client.key -out /home/devops/clientssl/client.crt -extensions v3_ca creates=/home/devops/clientssl/client.crt
+      shell: openssl req -new -nodes -x509 -subj "/C=US/ST=Oregon/L=Portland/O=IT/CN=${ansible_hostname}" -days 3650 -keyout /home/devops/clientssl/client.key -out /home/devops/clientssl/client.crt -extensions v3_ca creates=/home/devops/clientssl/client.crt
 
