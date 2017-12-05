@@ -72,6 +72,9 @@
     - name: "install postfix"
       apt:
         pkg: postfix
+    - name: "install bsd-mailx"
+      apt:
+        pkg: bsd-mailx
 
     - name: install cointhink api systemd unit file
       template:
@@ -82,6 +85,9 @@
         src: cointhink-email
         dest: /usr/local/bin/
         mode: 0755
+    - name: enable cointhink-api. restart systemd.
+      systemd: enabled=yes name=cointhink-api daemon_reload=yes
+
     - name: create clientssl folder
       file: path=/home/devops/clientssl state=directory owner=devops group=devops
     - name: create self-signed SSL cert
