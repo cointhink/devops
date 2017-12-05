@@ -3,5 +3,7 @@ Description=Cointhink API
 
 [Service]
 User=devops
+ExecStartPre=/usr/local/bin/cointhink-email %i
 ExecStart=/home/devops/api-go/cointhink
 WorkingDirectory=/home/devops/api-go
+Restart=always

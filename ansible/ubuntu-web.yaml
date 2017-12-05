@@ -77,7 +77,11 @@
       template:
         src: cointhink-api.service.jinja
         dest: /etc/systemd/system/cointhink-api.service
-
+    - name: "copy cointhink-email"
+      copy:
+        src: cointhink-email
+        dest: /usr/local/bin/
+        mode: 0755
     - name: create clientssl folder
       file: path=/home/devops/clientssl state=directory owner=devops group=devops
     - name: create self-signed SSL cert
