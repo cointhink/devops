@@ -1,8 +1,9 @@
 #cloud-config
+hostname: vultr-db-2
+
 ssh_authorized_keys:
   - ${ssh_key}
 
-hostname: db1
 
 coreos:
   update:
@@ -14,7 +15,7 @@ coreos:
         Name=eth1
 
         [Network]
-        Address=10.0.0.3
+        Address=10.0.0.4/24
 
     - name: mnt-ocean.mount
       command: start
@@ -26,16 +27,22 @@ coreos:
         [Install]
         WantedBy=multi-user.target
 
-    - name: cockroach-docker.service
+    - name: sshd.service
+      enable: true
+
+    - name: sshd.socket
+      mask: true
+
+    - name: postgres-docker.service
       command: start
       content: |
         [Unit]
-        Description=Starts cockroachdb
+        Description=Starts postgres
         After=docker.service
         Requires=docker.service
         [Service]
         Restart=always
-        ExecStart=/usr/bin/docker run --rm -p 8081:8080 -p 26257:26257 -v /mnt/ocean/cockroach:/cockroach/cockroach-data cockroachdb/cockroach:latest start --insecure
+        ExecStart=/usr/bin/docker run --rm -p 5432:5432 -v /mnt/ocean/postgres:/postgres -e PGDATA=/postgres postgres:alpine
         [Install]
         WantedBy=local.target
 

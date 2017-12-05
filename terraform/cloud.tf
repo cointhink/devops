@@ -30,17 +30,17 @@ resource "vultr_server" "cointhink_lxd_1" {
   ssh_key_ids = ["${vultr_ssh_key.cointhink.id}"]
 }
 
-resource "vultr_server" "cointhink_db_1" {
-  name = "cointhink db 1"
-  region_id = "${var.region}"
-  os_id = 179 #	CoreOS
-  plan_id = 201 # $5/mo,1GB ram, 25GB disk
-
-  ipv6 = true
-  private_networking = true
-  ssh_key_ids = ["${vultr_ssh_key.cointhink.id}"]
-  user_data = "${data.template_file.coreos_db.rendered}"
-}
+#resource "vultr_server" "cointhink_db_1" {
+#  name = "cointhink db 1"
+#  region_id = "${var.region}"
+#  os_id = 179 #	CoreOS
+#  plan_id = 201 # $5/mo,1GB ram, 25GB disk
+#
+#  ipv6 = true
+#  private_networking = true
+#  ssh_key_ids = ["${vultr_ssh_key.cointhink.id}"]
+#  user_data = "${data.template_file.coreos_db.rendered}"
+#}
 
 resource "vultr_server" "cointhink_db_2" {
   name = "vultr-db-2"
